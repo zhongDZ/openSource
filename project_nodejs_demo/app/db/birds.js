@@ -1,0 +1,123 @@
+var express = require('express');
+var db = require('./module_sql');
+var router = express.Router();
+
+// 该路由使用的中间件
+router.use(function timeLog(req, res, next) {
+  console.log('Time: ', Date.now());
+  next();
+});
+// 定义网站主页的路由
+router.get('/', function(req, res) {
+  	db.query('SELECT * FROM mytable;', function(_res){
+		for(var i = 0; i < _res.length; i++){
+			console.log(_res[i].name, _res[i].id, _res[i].address);
+		}
+		res.render('birds', {
+			title : 'birds',
+			name : _res[0].name,
+			age : _res[0].age,
+			address : _res[0].address
+		});
+	});
+});
+
+//开始游戏接口
+router.post('/startGame', function (req, res) {
+	var reqData = req.body;
+	var wx_id = reqData.wx_id;
+	var nick_name = reqData.nick_name;
+	console.log(wx_id, nick_name)
+
+	db.query('SELECT * FROM mytable;', function(_res){
+		res.json({
+			code : 1,//0代表网络出错，1代表成功，2代表请求成功，但无游戏次数。(对应的msg需要修改)
+			msg : '请求成功！',
+			data : _res
+		});
+	});
+});
+
+//增加
+router.post('/addUrl', function (req, res) {
+	var reqData = req.body;
+	var wx_id = reqData.wx_id;
+	var nick_name = reqData.nick_name;
+
+	var sql = 'insert into mytable(name, age, address) values(?,?,?)';
+	var param = ['测试',100,'测试'];
+	db.addData(sql, param, function(_res){
+		res.json({
+			code : 1,//0代表网络出错，1代表成功，2代表请求成功，但无游戏次数。(对应的msg需要修改)
+			msg : '请求成功！',
+			data : _res
+		});
+	});
+});
+
+
+//减少
+router.post('/reduceUrl', function (req, res) {
+	var reqData = req.body;
+	var wx_id = reqData.wx_id;
+	var nick_name = reqData.nick_name;
+
+	var sql = 'delete from mytable where id = 5';
+	db.reduceData(sql, function(_res){
+		res.json({
+			code : 1,//0代表网络出错，1代表成功，2代表请求成功，但无游戏次数。(对应的msg需要修改)
+			msg : '请求成功！',
+			data : _res
+		});
+	});
+});
+
+//查找
+router.post('/checkUrl', function (req, res) {
+	var reqData = req.body;
+	var wx_id = reqData.wx_id;
+	var nick_name = reqData.nick_name;
+
+	var sql = 'select * from mytable';
+	db.checkData(sql, function(_res){
+		res.json({
+			code : 1,//0代表网络出错，1代表成功，2代表请求成功，但无游戏次数。(对应的msg需要修改)
+			msg : '请求成功！',
+			data : _res
+		});
+	});
+});
+
+//更新
+router.post('/updateUrl', function (req, res) {
+	var reqData = req.body;
+	var wx_id = reqData.wx_id;
+	var nick_name = reqData.nick_name;
+
+	var sql = "update mytable set age = ? where id = ?";
+	var param = [9889, 12];
+	db.updateData(sql, param, function(_res){
+		res.json({
+			code : 1,//0代表网络出错，1代表成功，2代表请求成功，但无游戏次数。(对应的msg需要修改)
+			msg : '请求成功！',
+			data : _res
+		});
+	});
+});
+
+// // 定义 about 页面的路由
+// router.get('/about', function(req, res, next) {
+//   console.log('ID:', req.params);
+//   next();
+// }, 
+// function(req, res, next){
+// 	res.send('User Info');
+// });
+
+// // 处理 /user/:id， 打印出用户 id
+// router.get('/about', function (req, res, next) {
+//   // res.end('..................'+req.params);
+//   console.log('ID..:', req.params);
+// });
+
+module.exports = router;
