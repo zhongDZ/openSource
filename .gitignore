@@ -1,0 +1,15 @@
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+#*.rar
+*.zip
+.idea
+bin
+/node_modules
+/local
+/project_office/demos
+#/dev
