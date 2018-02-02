@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var db = require('../../db/sql');
+var db = require('../../db/mysqlDb');
 var util = require('../../utils/util');
 //接入微信验证
 var authApi = require('../../verify/wechat/authApi');
